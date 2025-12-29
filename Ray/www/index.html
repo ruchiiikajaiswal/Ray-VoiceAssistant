@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Ray - Voice Assistant</title>
+
+   <link rel="shorcut icon" href="assets/img/logo.ico.png" type="image/x-icon">
+
+   <!-- Bootstrap -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <!--Bootstrap icon-->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+
+   <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+   <div class="ray-app-container">
+      <!-- Added sidebar with chat history and new chat button -->
+      <aside class="ray-sidebar">
+         <button class="ray-new-chat-btn" id="NewChatBtn">
+            <i class="bi bi-plus-lg"></i>
+            New Chat
+         </button>
+
+         <nav class="ray-chat-history">
+            <div id="ChatHistory" class="ray-history-list">
+               <div class="ray-history-item ray-history-selected" title="Python interview prep">
+                  <i class="bi bi-chat-dots"></i>
+                  Python interview prep
+               </div>
+               <div class="ray-history-item" title="Bot if darrghus">
+                  <i class="bi bi-chat-dots"></i>
+                  Bot if darrghus
+               </div>
+               <div class="ray-history-item" title="Morning routine plan">
+                  <i class="bi bi-chat-dots"></i>
+                  Morning routine plan
+               </div>
+               <div class="ray-history-item" title="Project Alpha brainstorm">
+                  <i class="bi bi-chat-dots"></i>
+                  Project Alpha brainstorm
+               </div>
+               <div class="ray-history-item" title="Soundloss">
+                  <i class="bi bi-chat-dots"></i>
+                  Soundloss
+               </div>
+            </div>
+         </nav>
+      </aside>
+
+      <main class="ray-main-wrapper">
+         <!-- Added top bar with theme toggle and window controls -->
+         <div class="ray-top-bar">
+            <div class="ray-window-controls">
+               <button class="ray-window-btn" id="MinimizeBtn" title="Minimize">
+                  <i class="bi bi-dash"></i>
+               </button>
+               <button class="ray-window-btn" id="MaximizeBtn" title="Maximize">
+                  <i class="bi bi-square"></i>
+               </button>
+               <button class="ray-window-btn" id="CloseBtn" title="Close">
+                  <i class="bi bi-x"></i>
+               </button>
+            </div>
+            <div class="ray-top-icons">
+               <button class="ray-top-icon" id="SettingsTopBtn" title="Settings">
+                  <i class="bi bi-gear"></i>
+               </button>
+            </div>
+         </div>
+
+         <section id="Oval" class="ray-main-section">
+            <div class="ray-content">
+               <!-- Red glowing circular core with particle effects -->
+               <div class="ray-circle-container">
+                  <div class="ray-circle-glow"></div>
+                  <div class="ray-circle-core">
+                     <canvas id="particleCanvas" class="ray-particles"></canvas>
+                  </div>
+               </div>
+
+               <!-- Subtitle text -->
+               <h5 class="ray-subtitle">Ask me anything</h5>
+
+               <!-- Chat messages display area -->
+               <div class="ray-chat-messages" id="ChatMessages">
+                  <div class="ray-message ray-message-user">
+                     <span class="ray-message-sender">Hello</span>
+                  </div>
+                  <div class="ray-message ray-message-ai">
+                     <span class="ray-message-sender">You:</span> <span class="ray-message-text">Hello</span>
+                  </div>
+                  <div class="ray-message ray-message-user">
+                     <span class="ray-message-sender">What is the difference between a list and a tuple in Python?</span>
+                  </div>
+                  <div class="ray-message ray-message-ai">
+                     <span class="ray-message-sender">Ray:</span>
+                     <table class="ray-response-table">
+                        <thead>
+                           <tr>
+                              <th>Feature</th>
+                              <th>List</th>
+                              <th>Tuple</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td>Mutability</td>
+                              <td>Mutable</td>
+                              <td>Immutable</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <div class="ray-sources">
+                        <span>Sources</span>
+                        <button class="ray-regenerate-btn" id="RegenerateBtn" title="Regenerate response">
+                           <i class="bi bi-arrow-clockwise"></i>
+                           Regenerate
+                        </button>
+                     </div>
+                  </div>
+               </div>
+
+
+
+               <!-- Input area with controls -->
+               <div class="ray-input-section">
+                  <div class="ray-input-wrapper">
+                     <button class="ray-btn-control ray-paperclip-btn" id="AttachBtn" title="Attach file">
+                        <i class="bi bi-paperclip"></i>
+                     </button>
+                     <input type="text" class="ray-input-field" id="InputField" placeholder="type here..." maxlength="250">
+                     <div class="ray-input-info">
+                        <span class="ray-char-counter"><span id="CharCount">0</span>/250</span>
+                     </div>
+                     <div class="ray-controls">
+                        <button id="MicBtn" class="ray-btn-control" title="Voice input (Alt+R)">
+                           <i class="bi bi-mic-fill"></i>
+                        </button>
+                        <button id="SettingsBtn" class="ray-btn-control" title="Settings">
+                           <i class="bi bi-gear-fill"></i>
+                        </button>
+                        <button id="ChatBtn" class="ray-btn-control ray-send-btn" title="Send message">
+                           <i class="bi bi-send-fill"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+
+         <!-- Siri Wave section (shown during voice input) -->
+         <section id="SiriWave" class="ray-siri-section" hidden>
+            <div class="ray-siri-content">
+               <p class="ray-siri-message">Listening...</p>
+               <div id="siri-container" class="ray-siri-wave"></div>
+            </div>
+         </section>
+      </main>
+   </div>
+
+   <!--jQuery-->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+   <!-- Bootstrap -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"></script>
+
+   <!-- Siri wave -->
+   <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
+
+   <!-- Load eel.js - will be served by Eel automatically -->
+   <script type="text/javascript" src="/eel.js"></script>
+
+   <!-- Particle animation script -->
+   <script src="main.js"></script>
+
+   <script>
+      // Global functions exposed to Python via eel
+      function DisplayMessage(msg) {
+         console.log("[v0] DisplayMessage:", msg);
+         const siriMessage = document.querySelector('.ray-siri-message');
+         if (siriMessage) {
+            siriMessage.textContent = msg;
+         }
+         addChatMessage('Ray', msg);
+      }
+      
+      function ShowHood() {
+         console.log("[v0] ShowHood called");
+         const siriWave = document.getElementById('SiriWave');
+         const oval = document.getElementById('Oval');
+         if (siriWave) siriWave.hidden = true;
+         if (oval) oval.style.display = 'flex';
+      }
+
+      function addChatMessage(sender, message) {
+         const messagesDiv = document.getElementById('ChatMessages');
+         if (!messagesDiv) return;
+         
+         const messageEl = document.createElement('div');
+         messageEl.className = `ray-message ray-message-${sender === 'Ray' ? 'ai' : 'user'}`;
+         messageEl.innerHTML = `<span class="ray-message-sender">${sender}:</span> <span class="ray-message-text">${message}</span>`;
+         messagesDiv.appendChild(messageEl);
+         messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function StreamChunk(chunk) {
+         console.log("[v0] StreamChunk received:", chunk);
+         const messagesDiv = document.getElementById('ChatMessages');
+         if (!messagesDiv) return;
+
+         const lastMessages = messagesDiv.querySelectorAll('.ray-message-ai');
+         if (lastMessages.length > 0) {
+            const lastMessage = lastMessages[lastMessages.length - 1].querySelector('.ray-message-text');
+            if (lastMessage) {
+               lastMessage.textContent += chunk;
+               messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+         }
+      }
+
+      // Expose functions to Python
+      eel.expose(DisplayMessage);
+      eel.expose(ShowHood);
+      eel.expose(StreamChunk);
+
+      // Initialize UI interactions
+      $(document).ready(function () {
+         // Siri wave configuration
+         var siriWave = new SiriWave({
+            container: document.getElementById("siri-container"),
+            width: 800,
+            height: 200,
+            style: "ios9",
+            amplitude: "1",
+            speed: "0.30",
+            autostart: true,
+            color: "#ff3232"
+         });
+
+         const inputField = document.getElementById('InputField');
+         const charCounter = document.getElementById('CharCount');
+         
+         if (inputField && charCounter) {
+            inputField.addEventListener('input', () => {
+               charCounter.textContent = inputField.value.length;
+            });
+         }
+
+         $('#NewChatBtn').click(async function() {
+            console.log("[v0] New Chat button clicked");
+            try {
+               // Clear the chat history displayed in the central panel
+               document.getElementById('ChatMessages').innerHTML = '';
+               inputField.value = '';
+               charCounter.textContent = '0';
+               // Deselect any previously active chat in the history list
+               $('.ray-history-item').removeClass('ray-history-selected');
+               // Call backend to initialize new session
+               await eel.new_chat_session();
+            } catch (err) {
+               console.error("[v0] New chat error:", err);
+            }
+         });
+
+         // Window control buttons
+         $('#MinimizeBtn').click(function() {
+            console.log("[v0] Minimize button clicked");
+            // In a real desktop app, this would minimize the window
+         });
+
+         $('#MaximizeBtn').click(function() {
+            console.log("[v0] Maximize button clicked");
+            // In a real desktop app, this would maximize/restore the window
+         });
+
+         $('#CloseBtn').click(function() {
+            console.log("[v0] Close button clicked");
+            // In a real desktop app, this would close the window
+            if (confirm('Are you sure you want to close Ray?')) {
+               window.close();
+            }
+         });
+
+         $('#SettingsTopBtn').click(function() {
+            console.log("[v0] Top settings button clicked");
+            showSettingsModal();
+         });
+
+         // History item selection
+         $('.ray-history-item').click(async function() {
+            $('.ray-history-item').removeClass('ray-history-selected');
+            $(this).addClass('ray-history-selected');
+            const chatTitle = $(this).text().trim();
+            const chatId = $(this).data('chat-id') || chatTitle.toLowerCase().replace(/\s+/g, '_');
+            console.log("[v0] Selected chat history:", chatTitle, "ID:", chatId);
+
+            try {
+               // Call backend to fetch the specific conversation history
+               const chatData = await eel.load_chat_history(chatId);
+               if (chatData) {
+                  // Clear current messages and load the conversation
+                  document.getElementById('ChatMessages').innerHTML = '';
+                  chatData.forEach(message => {
+                     addChatMessage(message.sender, message.text);
+                  });
+               }
+            } catch (err) {
+               console.error("[v0] Load chat history error:", err);
+               DisplayMessage("Failed to load chat history");
+            }
+         });
+
+
+
+         $('#RegenerateBtn').click(async function() {
+            console.log("[v0] Regenerate button clicked");
+            const lastUserMsg = Array.from(document.querySelectorAll('.ray-message-user')).pop();
+            if (lastUserMsg) {
+               const query = lastUserMsg.querySelector('.ray-message-text').textContent;
+               const chatId = "current_chat"; // In a real app, this would be the actual chat ID
+               try {
+                  // Show thinking state
+                  DisplayMessage("Regenerating response...");
+                  
+                  const messagesDiv = document.getElementById('ChatMessages');
+                  const messageEl = document.createElement('div');
+                  messageEl.className = 'ray-message ray-message-ai';
+                  messageEl.innerHTML = `<span class="ray-message-sender">Ray:</span> <span class="ray-message-text"></span>`;
+                  messagesDiv.appendChild(messageEl);
+                  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                  
+                  // Call backend regenerate function
+                  const response = await eel.regenerate_response(chatId, query);
+                  if (response) {
+                     // Update the message with the new response
+                     const lastAiMsg = messagesDiv.querySelector('.ray-message-ai:last-child .ray-message-text');
+                     if (lastAiMsg) {
+                        lastAiMsg.textContent = response;
+                     }
+                  }
+               } catch (err) {
+                  console.error("[v0] Regenerate error:", err);
+                  DisplayMessage(`Error regenerating response: ${err.message}`);
+               }
+            }
+         });
+
+         // Microphone button click
+         $("#MicBtn").click(function () {
+            console.log("[v0] Mic button clicked");
+            $("#Oval").css("display", "none");
+            $("#SiriWave").attr("hidden", false);
+            eel.allCommands()();
+         });
+
+         // Alt + R hotkey for voice activation
+         document.addEventListener("keydown", function(e) {
+            if (e.key.toLowerCase() === "r" && e.altKey) {
+               console.log("[v0] Alt + R detected!");
+               $("#Oval").css("display", "none");
+               $("#SiriWave").attr("hidden", false);
+               eel.allCommands()();
+            }
+         });
+
+         inputField.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+               e.preventDefault();
+               const query = inputField.value.trim();
+               
+               if (!query) return;
+               
+               console.log("[v0] User typed:", query);
+               
+               addChatMessage('You', query);
+               addToChatHistory(query);
+               
+               try {
+                  const messagesDiv = document.getElementById('ChatMessages');
+                  const messageEl = document.createElement('div');
+                  messageEl.className = 'ray-message ray-message-ai';
+                  messageEl.innerHTML = `<span class="ray-message-sender">Ray:</span> <span class="ray-message-text"></span>`;
+                  messagesDiv.appendChild(messageEl);
+                  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                  
+                  await eel.respond(query);
+                  
+               } catch (err) {
+                  console.error("[v0] Error:", err);
+                  DisplayMessage(`Error: ${err.message}`);
+                  addChatMessage('Ray', `Error: ${err.message}`);
+               } finally {
+                  inputField.value = '';
+                  charCounter.textContent = '0';
+               }
+            }
+         });
+         
+         const chatBtn = document.getElementById('ChatBtn');
+         if (chatBtn) {
+            chatBtn.addEventListener('click', async () => {
+               console.log("[v0] Chat button clicked");
+               const query = inputField.value.trim();
+               if (query) {
+                  try {
+                     // Show user message
+                     addChatMessage('You', query);
+                     addToChatHistory(query);
+                     
+                     // Show AI typing state
+                     DisplayMessage("AI is typing...");
+                     
+                     const messagesDiv = document.getElementById('ChatMessages');
+                     const messageEl = document.createElement('div');
+                     messageEl.className = 'ray-message ray-message-ai';
+                     messageEl.innerHTML = `<span class="ray-message-sender">Ray:</span> <span class="ray-message-text"></span>`;
+                     messagesDiv.appendChild(messageEl);
+                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                     
+                     // Call backend process command
+                     const response = await eel.process_command(query);
+                     if (response) {
+                        // Update the message with the response
+                        const lastAiMsg = messagesDiv.querySelector('.ray-message-ai:last-child .ray-message-text');
+                        if (lastAiMsg) {
+                           lastAiMsg.textContent = response;
+                        }
+                     }
+                     
+                     inputField.value = '';
+                     charCounter.textContent = '0';
+                  } catch (err) {
+                     console.error("[v0] Chat error:", err);
+                     DisplayMessage(`Error: ${err.message}`);
+                     addChatMessage('Ray', `Error: ${err.message}`);
+                  }
+               } else {
+                  DisplayMessage("Please enter a question or command");
+                  addChatMessage('Ray', "Please enter a question or command");
+               }
+            });
+         }
+
+         const settingsBtn = document.getElementById('SettingsBtn');
+         if (settingsBtn) {
+            settingsBtn.addEventListener('click', function() {
+               console.log("[v0] Settings button clicked");
+               showSettingsModal();
+            });
+         }
+
+         function addToChatHistory(title) {
+            const historyList = document.getElementById('ChatHistory');
+            if (!historyList) return;
+
+            const item = document.createElement('div');
+            item.className = 'ray-history-item';
+            item.textContent = title.substring(0, 30) + (title.length > 30 ? '...' : '');
+            item.title = title;
+            item.addEventListener('click', () => {
+               console.log("[v0] Loading chat history:", title);
+               // Load this conversation
+            });
+            historyList.insertBefore(item, historyList.firstChild);
+
+            // Keep only last 10 items
+            while (historyList.children.length > 10) {
+               historyList.removeChild(historyList.lastChild);
+            }
+         }
+
+         // Settings modal function
+         function showSettingsModal() {
+            // Create settings modal
+            const modal = document.createElement('div');
+            modal.className = 'ray-settings-modal';
+            modal.innerHTML = `
+               <div class="ray-modal-overlay">
+                  <div class="ray-modal-content">
+                     <div class="ray-modal-header">
+                        <h3>Settings</h3>
+                        <button class="ray-modal-close">&times;</button>
+                     </div>
+                     <div class="ray-modal-body">
+                        <div class="ray-setting-item">
+                           <label>Theme:</label>
+                           <select id="themeSelect">
+                              <option value="dark">Dark</option>
+                              <option value="light">Light</option>
+                           </select>
+                        </div>
+                        <div class="ray-setting-item">
+                           <label>Voice Input:</label>
+                           <input type="checkbox" id="voiceEnabled" checked>
+                        </div>
+                        <div class="ray-setting-item">
+                           <label>Streaming Responses:</label>
+                           <input type="checkbox" id="streamingEnabled" checked>
+                        </div>
+                        <div class="ray-setting-item">
+                           <label>Model:</label>
+                           <span>Grok 4.1 Fast (Free)</span>
+                        </div>
+                        <div class="ray-setting-item">
+                           <label>API:</label>
+                           <span>OpenRouter</span>
+                        </div>
+                     </div>
+                     <div class="ray-modal-footer">
+                        <button class="ray-btn-secondary" id="resetSettings">Reset to Defaults</button>
+                        <button class="ray-btn-primary" id="saveSettings">Save</button>
+                     </div>
+                  </div>
+               </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Set current values
+            const currentTheme = localStorage.getItem("rayTheme") || "dark";
+            document.getElementById("themeSelect").value = currentTheme;
+
+            // Event listeners
+            document.querySelector('.ray-modal-close').addEventListener('click', () => {
+               document.body.removeChild(modal);
+            });
+
+            document.getElementById('saveSettings').addEventListener('click', () => {
+               const selectedTheme = document.getElementById("themeSelect").value;
+               localStorage.setItem("rayTheme", selectedTheme);
+
+               if (selectedTheme === "light") {
+                  applyLightTheme();
+               } else {
+                  applyDarkTheme();
+               }
+
+               addChatMessage("Ray", "Settings saved successfully!");
+               document.body.removeChild(modal);
+            });
+
+            document.getElementById('resetSettings').addEventListener('click', () => {
+               localStorage.setItem("rayTheme", "dark");
+               applyDarkTheme();
+               addChatMessage("Ray", "Settings reset to defaults!");
+               document.body.removeChild(modal);
+            });
+
+            // Close on overlay click
+            document.querySelector('.ray-modal-overlay').addEventListener('click', (e) => {
+               if (e.target === document.querySelector('.ray-modal-overlay')) {
+                  document.body.removeChild(modal);
+               }
+            });
+         }
+
+         // Theme functions
+         function applyLightTheme() {
+            document.body.style.background = "linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)";
+            document.body.style.color = "#333333";
+            const inputField = document.getElementById('InputField');
+            if (inputField) {
+               inputField.style.color = "#333333";
+               inputField.style.backgroundColor = "#ffffff";
+            }
+            const sidebar = document.querySelector(".ray-sidebar");
+            if (sidebar) sidebar.style.backgroundColor = "rgba(220, 220, 220, 0.9)";
+            const inputWrapper = document.querySelector(".ray-input-wrapper");
+            if (inputWrapper) {
+               inputWrapper.style.background = "rgba(255, 255, 255, 0.8)";
+               inputWrapper.style.borderColor = "rgba(100, 100, 100, 0.3)";
+            }
+            const chatMessages = document.querySelector(".ray-chat-messages");
+            if (chatMessages) {
+               chatMessages.style.background = "rgba(255, 255, 255, 0.9)";
+               chatMessages.style.borderColor = "rgba(100, 100, 100, 0.2)";
+            }
+         }
+
+         function applyDarkTheme() {
+            document.body.style.background = "radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%)";
+            document.body.style.color = "#ffffff";
+            const inputField = document.getElementById('InputField');
+            if (inputField) {
+               inputField.style.color = "#ffffff";
+               inputField.style.backgroundColor = "transparent";
+            }
+            const sidebar = document.querySelector(".ray-sidebar");
+            if (sidebar) sidebar.style.backgroundColor = "#1a1a1a";
+            const inputWrapper = document.querySelector(".ray-input-wrapper");
+            if (inputWrapper) {
+               inputWrapper.style.background = "rgba(40, 40, 40, 0.8)";
+               inputWrapper.style.borderColor = "rgba(255, 50, 50, 0.6)";
+            }
+            const chatMessages = document.querySelector(".ray-chat-messages");
+            if (chatMessages) {
+               chatMessages.style.background = "rgba(40, 40, 40, 0.8)";
+               chatMessages.style.borderColor = "rgba(255, 50, 50, 0.2)";
+            }
+         }
+      });
+   </script>
+
+</body>
+
+</html>
