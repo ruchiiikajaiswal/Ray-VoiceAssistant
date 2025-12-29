@@ -32,16 +32,15 @@ It listens for a **hotword**, launches an interactive UI, and executes commands 
 
 ## 📂 Project Structure
 
-Ray-VoiceAssistant/
-│── main.py # Entry point
-│── command.py # Voice command logic
-│── requirements.txt # Dependencies
-│── README.md # Project documentation
-│── ui/ # Frontend files
-│── assets/ # Images, icons, sounds
+Ray-VoiceAssistant-
+-main.py # Entry point
+-command.py # Voice command logic
+-requirements.txt # Dependencies
+-README.md # Project documentation
+-ui/ # Frontend files
+-assets/ # Images, icons, sounds
 
-yaml
-Copy code
+
 
 ---
 
@@ -57,8 +56,7 @@ Copy code
 
 ## ⚙️ Installation & Setup
 
-### 1️⃣ Clone the Repository
-```bash
+1️⃣ Clone the Repository
 git clone https://github.com/ruchiiikajaiswal/Ray-VoiceAssistant.git
 cd Ray-VoiceAssistant
 2️⃣ Install Dependencies
@@ -96,6 +94,8 @@ Ruchika Jaiswal
 🔗 GitHub: https://github.com/ruchiiikajaiswal
 👩‍💻 Contributor
 Piyush Kumar
+🔗 GitHub: https://github.com/PiyushKuMar109
+
 Passionate about Python, Automation, AI, and Voice Technologies.
 
 📜 License
